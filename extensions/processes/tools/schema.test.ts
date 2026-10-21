@@ -8,6 +8,8 @@ import {
   type ListDetails,
   type ListProcess,
   type OutputDetails,
+  PROCESS_ACTIONS,
+  ProcessToolDeclaredOutputSchema,
   type ProcessToolOutput,
   ProcessToolOutputSchema,
   type StartDetails,
@@ -118,6 +120,31 @@ describe("ProcessToolOutputSchema", () => {
     ];
 
     expect(mirrored).toHaveLength(7);
+  });
+});
+
+describe("ProcessToolDeclaredOutputSchema", () => {
+  it("stays a basic object with only the action discriminator", () => {
+    const schema = ProcessToolDeclaredOutputSchema as {
+      type: string;
+      anyOf?: unknown;
+      properties: Record<string, { enum?: string[] }>;
+    };
+    expect(schema.type).toBe("object");
+    expect(schema.anyOf).toBeUndefined();
+    expect(Object.keys(schema.properties)).toEqual(["action"]);
+    expect([...(schema.properties.action.enum ?? [])].sort()).toEqual(
+      [...PROCESS_ACTIONS].sort(),
+    );
+  });
+
+  it("covers every action of the detailed union", () => {
+    const members = (
+      ProcessToolOutputSchema as {
+        anyOf: Array<{ properties: { action: { const: string } } }>;
+      }
+    ).anyOf.map((member) => member.properties.action.const);
+    expect([...members].sort()).toEqual([...PROCESS_ACTIONS].sort());
   });
 });
 

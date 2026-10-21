@@ -335,3 +335,34 @@ export const ProcessToolOutputSchema = Type.Union(
   },
 );
 export type ProcessToolOutput = Static<typeof ProcessToolOutputSchema>;
+
+export const PROCESS_ACTIONS = [
+  "start",
+  "list",
+  "stop",
+  "write",
+  "update",
+  "clear",
+  "output",
+] as const;
+
+/**
+ * Basic schema declared to pi as the tool's `outputSchema`.
+ *
+ * The detailed union above stays the source of truth for types and tests, but
+ * declaring it makes codemode render the whole nested TypeScript type into the
+ * tool description (~12KB). This keeps the declaration to `{ action, ... }`
+ * while scripts still receive the full structured payload.
+ */
+export const ProcessToolDeclaredOutputSchema = Type.Object(
+  {
+    action: StringEnum(PROCESS_ACTIONS, {
+      description: "The action that produced this payload.",
+    }),
+  },
+  {
+    additionalProperties: true,
+    description:
+      "Structured payload for the action. Fields depend on action: start {process, notify}; list {processes, filters, counts}; stop {result}; write {id, processName, process, bytes, end, ok, reason}; update {ok, error?, process?, renamed, previousName, watches}; clear {cleared}; output {id, processName, processStatus, stream, tailLines, pattern, mode, stdoutFile, stderrFile, stdout, stderr, truncation?}.",
+  },
+);

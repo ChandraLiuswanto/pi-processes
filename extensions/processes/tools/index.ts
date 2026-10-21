@@ -23,7 +23,7 @@ import {
   type OutputDetails,
   ProcessesParams,
   type ProcessesParamsType,
-  ProcessToolOutputSchema,
+  ProcessToolDeclaredOutputSchema,
   type StartDetails,
   type StopDetails,
   type UpdateDetails,
@@ -68,7 +68,7 @@ export function registerProcessTool(
         "process tool: for the full lifecycle (start, list, output, update, write, stop, clear), notify options, use cases, and noisy-watch handling, read the pi-processes skill.",
       ],
       parameters: ProcessesParams,
-      outputSchema: ProcessToolOutputSchema,
+      outputSchema: ProcessToolDeclaredOutputSchema,
       async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
         if (params.action === "output") {
           const result = executeOutput(params, manager);
